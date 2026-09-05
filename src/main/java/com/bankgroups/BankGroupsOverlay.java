@@ -14,7 +14,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -54,7 +54,7 @@ public class BankGroupsOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		Widget container = client.getWidget(WidgetInfo.BANK_ITEM_CONTAINER);
+		Widget container = client.getWidget(InterfaceID.Bankmain.ITEMS);
 		if (container == null || container.isHidden())
 		{
 			return null;
