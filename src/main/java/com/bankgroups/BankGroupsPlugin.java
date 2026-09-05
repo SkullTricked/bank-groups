@@ -15,7 +15,7 @@ import net.runelite.api.MenuEntry;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
@@ -160,7 +160,7 @@ public class BankGroupsPlugin extends Plugin
 			return;
 		}
 
-		Widget container = client.getWidget(WidgetInfo.BANK_ITEM_CONTAINER);
+		Widget container = client.getWidget(InterfaceID.Bankmain.ITEMS);
 		if (container == null || container.isHidden())
 		{
 			return;
@@ -182,7 +182,7 @@ public class BankGroupsPlugin extends Plugin
 		MenuEntry sourceEntry = null;
 		for (MenuEntry entry : entries)
 		{
-			if (entry.getParam1() == WidgetInfo.BANK_ITEM_CONTAINER.getId())
+			if (entry.getParam1() == InterfaceID.Bankmain.ITEMS)
 			{
 				if (sourceEntry == null)
 				{
@@ -256,7 +256,7 @@ public class BankGroupsPlugin extends Plugin
 
 	private boolean isBankItemContainer(int widgetId)
 	{
-		return widgetId == WidgetInfo.BANK_ITEM_CONTAINER.getId();
+		return widgetId == InterfaceID.Bankmain.ITEMS;
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class BankGroupsPlugin extends Plugin
 	 */
 	private int resolveItemId(int childIndex, int widgetId)
 	{
-		Widget container = client.getWidget(WidgetInfo.BANK_ITEM_CONTAINER);
+		Widget container = client.getWidget(InterfaceID.Bankmain.ITEMS);
 		if (container == null)
 		{
 			return -1;
