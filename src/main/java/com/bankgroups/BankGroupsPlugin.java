@@ -26,6 +26,8 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import net.runelite.api.GameState;
+import net.runelite.api.events.GameStateChanged;
 
 @PluginDescriptor(
 		name = "Bank Groups",
@@ -151,6 +153,24 @@ public class BankGroupsPlugin extends Plugin
 	// ---------------------------------------------------------------
 	// Edit mode / bank click interception
 	// ---------------------------------------------------------------
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		// The RSProfile our saved data lives under doesn't exist until a
+		// character is actually logged in - startUp() runs at client boot,
+		// well before that, so the very first loadGroups() call always finds
+		// nothing and falls back to fresh defaults. Reload here, once a
+		// profile genuinely exists, to pick up whatever was actually saved.
+		if (event.getGameState() == GameState.LOGGED_IN)
+		{
+			loadGroups();
+			if (panel != null)
+			{
+				panel.rebuild();
+			}
+		}
+	}
 
 	@Subscribe
 	public void onClientTick(ClientTick tick)

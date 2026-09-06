@@ -102,20 +102,6 @@ public class BankGroupsOverlay extends Overlay
 		int pitchX = commonPitch(xs, raw.get(0).bounds.width);
 		int pitchY = commonPitch(ys, raw.get(0).bounds.height);
 
-		// A single stable reference point: every tile's pixel position is
-		// computed from this plus an integer row/col offset, rather than
-		// from each item's own bounds. This matters because a handful of
-		// items (observed: ones showing the "level too low" warning
-		// triangle) report bounds a pixel or two off from where the grid
-		// actually says they should be - using their raw bounds directly
-		// for drawing would bake that per-item noise into the tile
-		// position. Rounding their position to a grid index absorbs the
-		// noise; deriving the draw rectangle from the reference + index
-		// afterwards throws that noise away entirely.
-		RawItem reference = raw.get(0);
-		int refCol = Math.round(reference.bounds.x / (float) pitchX);
-		int refRow = Math.round(reference.bounds.y / (float) pitchY);
-
 		List<Cell> cells = new ArrayList<>();
 		for (RawItem r : raw)
 		{
@@ -128,16 +114,23 @@ public class BankGroupsOverlay extends Overlay
 				continue;
 			}
 
-			// Absolute grid position from raw pixel position, not from
-			// counting items present in this row/column.
+			// Grid position (for adjacency only, never for pixel placement)
+			// from absolute pixel position, not from counting items present
+			// in this row/column.
 			int col = Math.round(r.bounds.x / (float) pitchX);
 			int row = Math.round(r.bounds.y / (float) pitchY);
 
-			int gridX = reference.bounds.x + (col - refCol) * pitchX;
-			int gridY = reference.bounds.y + (row - refRow) * pitchY;
-
-			int rawX = gridX + config.horizontalOffset();
-			int rawY = gridY - config.topClearance() + config.verticalOffset();
+			// The drawn rectangle is anchored to THIS item's own real
+			// on-screen position, not extrapolated from some other
+			// reference item. Extrapolating from a single reference point
+			// (an earlier version of this code did that) multiplies any
+			// tiny pitch measurement error by how far a row is from the
+			// reference - invisible near the top of the bank, but growing
+			// steadily worse toward the bottom and while scrolling. Using
+			// each item's own bounds directly has no such drift: it's
+			// always anchored to where that item actually is.
+			int rawX = r.bounds.x + config.horizontalOffset();
+			int rawY = r.bounds.y - config.topClearance() + config.verticalOffset();
 			int rawW = pitchX;
 			int rawH = pitchY + config.topClearance();
 
